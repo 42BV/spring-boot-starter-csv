@@ -1,0 +1,97 @@
+package nl._42.boot.csv;
+
+import lombok.extern.slf4j.Slf4j;
+import org.csveed.api.CsvClient;
+import org.csveed.api.CsvClientImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeSet;
+
+/**
+ * Capable of processing CSV files.
+ */
+@Slf4j
+@Service
+public class CsvService {
+
+    private final Map<String, CsvHandler<?>> handlers = new HashMap<>();
+    private final CsvProperties properties;
+
+    public CsvService(CsvProperties properties) {
+        this.properties = properties;
+    }
+
+    /**
+     * Retrieve all known CSV types and properties.
+     * @return the parameters
+     */
+    public CsvParameters getParameters() {
+        Collection<String> types = new TreeSet<>(handlers.keySet());
+        return new CsvParameters(types, properties.getSeparator(), properties.getQuote());
+    }
+
+    /**
+     * Process a CSV file, based on default properties.
+     * @param is the CSV content
+     * @param type the CSV type
+     * @return the result
+     */
+    public CsvResult load(InputStream is, String type) {
+        return load(is, type, properties);
+    }
+
+    /**
+     * Process a CSV file.
+     * @param is the CSV content
+     * @param type the CSV type
+     * @param properties the properties
+     * @return the result
+     */
+    public CsvResult load(InputStream is, String type, CsvProperties properties) {
+        CsvHandler handler = getHandler(type);
+        return handle(is, handler, properties);
+    }
+
+    private CsvHandler<?> getHandler(String type) {
+        CsvHandler<?> handler = handlers.get(type);
+        Objects.requireNonNull(handler, "Unsupported CSV type: " + type);
+        return handler;
+    }
+
+    private <T> CsvResult handle(InputStream is, CsvHandler<T> handler, CsvProperties properties) {
+        CsvClient<T> client = buildCsvClient(is, handler.getBeanClass(), properties);
+
+        try {
+            return handler.handle(client);
+        } catch (RuntimeException rte) {
+            return new CsvResult().error(0, rte.getMessage());
+        }
+    }
+
+    private <T> CsvClient<T> buildCsvClient(InputStream is, Class<T> beanClass, CsvProperties properties) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+        CsvClient<T> csvReader = new CsvClientImpl<>(reader, beanClass);
+        csvReader.setQuote(properties.getQuote());
+        csvReader.setSeparator(properties.getSeparator());
+        return csvReader;
+    }
+
+    /**
+     * Register all known handlers.
+     * @param handlers the handlers, if any
+     */
+    @Autowired(required = false)
+    public void setHandlers(Collection<CsvHandler> handlers) {
+        handlers.forEach(handler -> this.handlers.put(handler.getType(), handler));
+    }
+
+}
