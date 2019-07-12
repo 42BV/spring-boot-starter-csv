@@ -8,18 +8,13 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class PersonCsvHandler implements CsvHandler<Row> {
+public class PersonCsvHandler implements CsvRowHandler {
 
   public static final String TYPE = "persons";
 
   @Override
   public String getType() {
     return TYPE;
-  }
-
-  @Override
-  public Class<Row> getBeanClass() {
-    return Row.class;
   }
 
   @Override

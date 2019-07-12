@@ -17,11 +17,11 @@ public class CsvTemplate {
         this(new CsvResult());
     }
 
-    <T> CsvResult read(Supplier<T> supplier, Consumer<T> consumer) {
+    public <T> CsvResult read(Supplier<T> supplier, Consumer<T> consumer) {
         return read(supplier, (value) -> value, consumer);
     }
 
-    <T, R> CsvResult read(Supplier<T> supplier, Function<T, R> transformer, Consumer<R> consumer) {
+    public <T, R> CsvResult read(Supplier<T> supplier, Function<T, R> transformer, Consumer<R> consumer) {
         int rowNumber = 1;
         while (next(supplier, transformer, consumer, rowNumber)) {
             rowNumber++;

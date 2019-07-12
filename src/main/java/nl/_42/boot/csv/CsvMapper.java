@@ -30,11 +30,11 @@ public class CsvMapper<T> {
         this.constructor = constructor;
     }
 
-    static <T> Builder<T> builder(Supplier<T> constructor, Header header) {
+    public static <T> Builder<T> builder(Supplier<T> constructor, Header header) {
         return new Builder<>(constructor, header);
     }
 
-    T map(Row row) {
+    public T map(Row row) {
         T details = constructor.get();
         for (int index = 1; index <= row.size(); index++) {
             String value = row.get(index);
@@ -46,7 +46,7 @@ public class CsvMapper<T> {
         return details;
     }
 
-    static final class Builder<T> {
+    public static final class Builder<T> {
 
         private final Map<Integer, BiConsumer<String, T>> columns = new HashMap<>();
         private final Supplier<T> constructor;
@@ -66,7 +66,7 @@ public class CsvMapper<T> {
          * @param consumer the handler
          * @return this builder
          */
-        Builder<T> add(String expected, BiConsumer<String, T> consumer) {
+        public Builder<T> add(String expected, BiConsumer<String, T> consumer) {
             checkHeader(expected);
             return this.add(consumer);
         }
@@ -114,7 +114,7 @@ public class CsvMapper<T> {
          * @param mapper the function producing a handler for each column
          * @return this builder
          */
-        Builder<T> addStartsWith(String prefix, Function<String, BiConsumer<String, T>> mapper) {
+        public Builder<T> addStartsWith(String prefix, Function<String, BiConsumer<String, T>> mapper) {
             String name = getName(index);
             while (StringUtils.startsWith(name, prefix)) {
                 String suffix = StringUtils.substringAfter(name, prefix);
@@ -129,7 +129,7 @@ public class CsvMapper<T> {
          * @param mapper the function producing a handler for each column
          * @return this builder
          */
-        Builder<T> addRemainder(Function<String, BiConsumer<String, T>> mapper) {
+        public Builder<T> addRemainder(Function<String, BiConsumer<String, T>> mapper) {
             while (index <= header.size()) {
                 String name = getName(index);
                 add(mapper.apply(name));
@@ -137,7 +137,7 @@ public class CsvMapper<T> {
             return this;
         }
 
-        CsvMapper<T> build() {
+        public CsvMapper<T> build() {
             CsvMapper<T> mapper = new CsvMapper<>(constructor);
             mapper.columns.putAll(columns);
             return mapper;
