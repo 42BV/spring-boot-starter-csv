@@ -1,10 +1,15 @@
 # Spring Boot Starter CSV
 
-Registers a `CsvService` and `/csv` endpoint, capable of importing CSV files.
+Provides support for importing data by CSV files. This Spring Boot starter
+registers a `CsvService` and `/csv` endpoint, capable of handling CSV files.
 
-## Types
+It's also possible to import CSV files using a file directory.
 
-Consumers register implementations of the `CsvHandler` interface per type of file:
+## Handler
+
+Each type of CSV file demands a handler implementation. This handler describes
+how the file should be parsed and handled. Register a component that implements
+the `CsvHandler` interface:
 
 ```java
 @Slf4j
@@ -31,8 +36,8 @@ public class OrderCsvHandler implements CsvHandler<OrderCsvRow> {
 }
 ```
 
-Handlers are detected automatically during application startup and offered to end users.
-By default the handlers are insecure, add security rules to the handler implementation when needed.
+Handlers are detected during application startup and provided to end users. When handlers should 
+be protected, please add your own security logic.
 
 ## Endpoints
 
@@ -61,3 +66,37 @@ Content will be processed per line and results are returned as response body:
  ]
 }
 ```
+
+## File
+
+Files can also be uploaded via the file system. Enabling file mode requires some
+configuration:
+
+```yaml
+csv:
+  file:
+    cron: '*/5 * * * *' (cron when to scan)
+    directory: /opt/app/csv (base directory)
+    run_on_startup: true (scan on startup, default false)
+```
+
+In file mode the application will automatically scan the file system for new `*.csv`
+files in the `upload` directory of every registered handler and attempt to process them. 
+
+Files are moved to the `work` directory and processed. After processing it will either 
+move to the `success` or `fail` directory. Error messages are moved in the `logs` directory.
+
+The directory structure looks as follows:
+```
+ /opt/app/csv (base dir)
+  /persons (csv type)
+   /uploads (inbox)
+   /work
+   /success
+   /fail
+   /logs
+  /orders (other type)
+```
+
+Make sure the user running the application has write access to the base directory. Sub directories
+will be created on demand.
