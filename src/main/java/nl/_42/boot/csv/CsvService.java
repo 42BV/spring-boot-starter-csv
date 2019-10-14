@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -34,12 +35,20 @@ public class CsvService {
      * @return the parameters
      */
     public CsvParameters getParameters() {
-        Collection<String> types = new TreeSet<>(handlers.keySet());
+        Set<String> types = getTypes();
         return new CsvParameters(types, properties.getSeparator(), properties.getQuote());
     }
 
     /**
-     * Process a CSV file, based on default properties.
+     * Retrieve all CSV types.
+     * @return the types
+     */
+    public Set<String> getTypes() {
+        return new TreeSet<>(handlers.keySet());
+    }
+
+    /**
+     * Process a CSV, based on default properties.
      * @param is the CSV content
      * @param type the CSV type
      * @return the result
@@ -49,7 +58,7 @@ public class CsvService {
     }
 
     /**
-     * Process a CSV file.
+     * Process a CSV.
      * @param is the CSV content
      * @param type the CSV type
      * @param properties the properties

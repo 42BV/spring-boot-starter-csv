@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
-@ComponentScan(basePackageClasses = CsvAutoConfiguration.class)
+@ComponentScan(basePackageClasses = CsvService.class)
 @ConditionalOnProperty(name = "csv.enabled", havingValue = "true", matchIfMissing = true)
 public class CsvAutoConfiguration {
 

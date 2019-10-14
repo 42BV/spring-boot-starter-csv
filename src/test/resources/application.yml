@@ -1,0 +1,3 @@
+csv:
+  file:
+    directory: target/test-classes/csv

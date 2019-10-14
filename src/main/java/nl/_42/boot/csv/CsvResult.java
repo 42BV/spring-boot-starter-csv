@@ -21,6 +21,12 @@ public class CsvResult {
         return this;
     }
 
+    public static CsvResult error(Throwable throwable) {
+        CsvResult result = new CsvResult();
+        result.error(0, throwable.getMessage());
+        return result;
+    }
+
     public CsvResult error(int rowNumber, String message) {
         CsvError error = errors.stream().filter(e -> e.rowNumber == rowNumber)
                                         .findFirst().orElseGet(() -> addError(rowNumber));

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "dice.csv")
+@ConfigurationProperties(prefix = "csv")
 public class CsvProperties {
 
     private char separator = ',';
