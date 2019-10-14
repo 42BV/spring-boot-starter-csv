@@ -43,7 +43,7 @@ public class CsvFileService {
     }
   }
 
-  @Scheduled(cron = "csv.file.cron")
+  @Scheduled(cron = "${csv.file.cron}")
   public void run() {
     Collection<String> types = getTypes();
     types.forEach(this::run);
