@@ -21,7 +21,7 @@ import static java.lang.String.format;
  * Only use this mapper when static mapping is not possible.
  * @param <T> the target type
  */
-public class CsvMapper<T> {
+public class CsvMapper<T> implements Function<Row, T> {
 
     private final Map<Integer, BiConsumer<String, T>> columns = new HashMap<>();
     private final Supplier<T> constructor;
@@ -44,6 +44,11 @@ public class CsvMapper<T> {
             }
         }
         return details;
+    }
+
+    @Override
+    public T apply(Row row) {
+        return map(row);
     }
 
     public static final class Builder<T> {
