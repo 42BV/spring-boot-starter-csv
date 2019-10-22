@@ -8,11 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
 
@@ -67,6 +69,22 @@ public class CsvTest {
         assertEquals("Mijn omschrijving", value.getDescriptions().get("NL"));
         assertEquals("My description", value.getDescriptions().get("EN"));
         assertEquals("male", value.getTags().get("gender"));
+    }
+
+    @Test
+    public void success_invalid_characters() throws IOException {
+        try (InputStream is = new ClassPathResource("persons.csv").getInputStream()) {
+            String content = '\uFEFF' + new Scanner(is).useDelimiter("\\A").next();
+            ByteArrayInputStream bis = new ByteArrayInputStream(content.getBytes());
+
+            CsvResult result = csvService.load(bis, PersonCsvHandler.TYPE);
+
+            assertEquals(1, result.getSuccess());
+            assertEquals(0, result.getErrors().size());
+        }
+
+        List<Object> values = Results.values();
+        assertEquals(1, values.size());
     }
 
     @Test
