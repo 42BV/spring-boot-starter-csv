@@ -125,7 +125,7 @@ public class CsvFileService {
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(target))) {
       for (CsvResult.CsvError error : result.getErrors()) {
-        String message = format("%d: %s", error.getRowNumber(), error.getMessage());
+        String message = format("%d: %s\n", error.getRowNumber(), error.getMessage());
         writer.write(message);
       }
     } catch (IOException ioe) {
