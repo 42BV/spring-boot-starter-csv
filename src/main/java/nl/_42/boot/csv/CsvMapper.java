@@ -24,12 +24,10 @@ import static java.lang.String.format;
 public class CsvMapper<T> implements Function<Row, T> {
 
     private final Map<Integer, BiConsumer<String, T>> columns = new HashMap<>();
-    private final Function<String, String> formatter;
     private final Supplier<T> constructor;
 
-    private CsvMapper(Supplier<T> constructor, Function<String, String> formatter) {
+    private CsvMapper(Supplier<T> constructor) {
         this.constructor = constructor;
-        this.formatter = formatter;
     }
 
     public static <T> Builder<T> builder(Supplier<T> constructor, Header header) {
@@ -42,19 +40,10 @@ public class CsvMapper<T> implements Function<Row, T> {
             String value = row.get(index);
             BiConsumer<String, T> column = columns.get(index);
             if (column != null && StringUtils.isNotBlank(value)) {
-                String formatted = getValue(value, formatter);
-                column.accept(formatted, details);
+                column.accept(value, details);
             }
         }
         return details;
-    }
-
-    private static String getValue(String value, Function<String, String> formatter) {
-        String result = value;
-        if (value != null) {
-            result = formatter.apply(value);
-        }
-        return result;
     }
 
     @Override
@@ -103,7 +92,10 @@ public class CsvMapper<T> implements Function<Row, T> {
             }
 
             String name = header.getName(index);
-            return getValue(name, formatter);
+            if (name != null) {
+                name = formatter.apply(name);
+            }
+            return name;
         }
 
         private Builder<T> add(BiConsumer<String, T> consumer) {
@@ -168,7 +160,7 @@ public class CsvMapper<T> implements Function<Row, T> {
         }
 
         public CsvMapper<T> build() {
-            CsvMapper<T> mapper = new CsvMapper<>(constructor, formatter);
+            CsvMapper<T> mapper = new CsvMapper<>(constructor);
             mapper.columns.putAll(columns);
             return mapper;
         }

@@ -61,14 +61,14 @@ public class CsvTest {
         assertEquals(1, values.size());
 
         PersonCsvRow value = (PersonCsvRow) values.get(0);
-        assertEquals("Jan", value.getFirstName());
-        assertEquals("de Boer", value.getLastName());
-        assertEquals("jan@test.nl", value.getEmail());
+        assertEquals("Irénée", value.getFirstName());
+        assertEquals("de Tester", value.getLastName());
+        assertEquals("irenee@test.nl", value.getEmail());
         assertEquals(28, value.getAge());
         assertEquals("1234AB", value.getPostalCode());
         assertEquals("Mijn omschrijving", value.getDescriptions().get("NL"));
         assertEquals("My description", value.getDescriptions().get("EN"));
-        assertEquals("male", value.getTags().get("gender"));
+        assertEquals("female", value.getTags().get("gender"));
     }
 
     @Test

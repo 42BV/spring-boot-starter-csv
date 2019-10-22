@@ -27,7 +27,7 @@ public class CsvController {
     }
 
     @PostMapping
-    public CsvResult load(@RequestParam("file") MultipartFile file, @RequestParam String type, CsvProperties properties) throws IOException {
+    public CsvResult load(@RequestParam("file") MultipartFile file, @RequestParam("type") String type, CsvProperties properties) throws IOException {
         try (InputStream is = file.getInputStream()) {
             return csvService.load(is, type, properties);
         }
