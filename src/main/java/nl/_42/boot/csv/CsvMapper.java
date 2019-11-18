@@ -77,6 +77,20 @@ public class CsvMapper<T> implements Function<Row, T> {
             return this.add(consumer);
         }
 
+        /**
+         * Register consumer when header is present.
+         * @param expected the expected name
+         * @param consumer the handler
+         * @return this builder
+         */
+        public Builder<T> addIfPresent(String expected, BiConsumer<String, T> consumer) {
+            String name = getName(index);
+            if (Objects.equals(expected, name)) {
+                add(consumer);
+            }
+            return this;
+        }
+
         private void checkHeader(String expected) {
             String name = getName(index);
             if (!Objects.equals(expected, name)) {
