@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,15 +35,13 @@ public class CsvFileService {
   private final CsvFileProperties properties;
   private final CsvService service;
 
-  @PostConstruct
-  void runOnStartup() {
-    if (properties.isRunOnStartup()) {
-      run();
-    }
-  }
-
+  /**
+   * Run an import for all supported CSV types.
+   */
   @Scheduled(cron = "${csv.file.cron}")
   public void run() {
+    log.info("Started importing CSV files from: {}", properties.getDirectory().getAbsolutePath());
+
     Collection<String> types = getTypes();
     types.forEach(this::run);
   }
@@ -57,8 +54,22 @@ public class CsvFileService {
     return types;
   }
 
+  /**
+   * Run import for a specific CSV type.
+   * @param type the type
+   */
   public void run(String type) {
+    try {
+      perform(type);
+    } catch (RuntimeException rte) {
+      log.error("Could not import '" + type + "' CSV files", rte);
+    }
+  }
+
+  private void perform(String type) {
     File upload = properties.getDirectory(type, UPLOAD);
+    log.info("Importing '{}' CSV files from: {}", type, upload.getAbsolutePath());
+
     File[] files = upload.listFiles();
     for (File file : files) {
       if (isSupported(file)) {
@@ -89,7 +100,7 @@ public class CsvFileService {
     if (success) {
       return Optional.of(target);
     } else {
-      log.info("Couldn't move csv '{}' to: {}", file.getAbsolutePath(), target.getAbsolutePath());
+      log.info("Couldn't move CSV '{}' to: {}", file.getAbsolutePath(), target.getAbsolutePath());
       return Optional.empty();
     }
   }
