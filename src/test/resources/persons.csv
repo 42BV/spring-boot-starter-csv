@@ -1,2 +1,2 @@
-first_name,last_name,email,age,postal_code,description-NL,description-EN,gender
-Irénée,de Tester,irenee@test.nl,28,1234AB,Mijn omschrijving,My description,female
+first_name,last_name,email,active,age,postal_code,description-NL,description-EN,gender
+Irénée,de Tester,irenee@test.nl,TRUE,28,1234AB,Mijn omschrijving,My description,female

@@ -22,6 +22,7 @@ public class PersonCsvHandler extends AbstractRowCsvHandler<PersonCsvRow> {
         .add("first_name", (firstName, person) -> person.setFirstName(firstName))
         .add("last_name", (lastName, person) -> person.setLastName(lastName))
         .add("email", (email, person) -> person.setEmail(email))
+        .add("active", (active, person) -> person.setActive(Boolean.parseBoolean(active)))
         .addIfPresent("unknown", (value, person) -> {})
         .addIfPresent("age", (age, person) -> person.setAge(Integer.parseInt(age)))
         .add("postal_code", (postalCode, person) -> person.setPostalCode(postalCode))

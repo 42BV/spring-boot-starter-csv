@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,6 +36,7 @@ public class CsvTest {
         try (InputStream is = new ClassPathResource("orders.csv").getInputStream()) {
             CsvResult result = csvService.load(is, OrderCsvHandler.TYPE);
 
+            assertEquals("", getErrors(result));
             assertEquals(1, result.getSuccess());
             assertEquals(0, result.getErrors().size());
         }
@@ -53,6 +55,7 @@ public class CsvTest {
         try (InputStream is = new ClassPathResource("persons.csv").getInputStream()) {
             CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
 
+            assertEquals("", getErrors(result));
             assertEquals(1, result.getSuccess());
             assertEquals(0, result.getErrors().size());
         }
@@ -64,6 +67,7 @@ public class CsvTest {
         assertEquals("Irénée", value.getFirstName());
         assertEquals("de Tester", value.getLastName());
         assertEquals("irenee@test.nl", value.getEmail());
+        assertEquals(true, value.isActive());
         assertEquals(28, value.getAge());
         assertEquals("1234AB", value.getPostalCode());
         assertEquals("Mijn omschrijving", value.getDescriptions().get("NL"));
@@ -79,6 +83,7 @@ public class CsvTest {
 
             CsvResult result = csvService.load(bis, PersonCsvHandler.TYPE);
 
+            assertEquals("", getErrors(result));
             assertEquals(1, result.getSuccess());
             assertEquals(0, result.getErrors().size());
         }
@@ -95,8 +100,8 @@ public class CsvTest {
             assertEquals(0, result.getSuccess());
             assertEquals(2, result.getErrors().size());
 
-            assertEquals("Could not map column 'age' at index 4: For input string: \"invalid\"", result.getErrors().get(0).getMessage());
-            assertEquals("Could not map column 'age' at index 4: For input string: \"other\"", result.getErrors().get(1).getMessage());
+            assertEquals("Could not map column 'age' at index 5: For input string: \"invalid\"", result.getErrors().get(0).getMessage());
+            assertEquals("Could not map column 'age' at index 5: For input string: \"other\"", result.getErrors().get(1).getMessage());
         }
     }
 
@@ -109,10 +114,16 @@ public class CsvTest {
             assertEquals(1, result.getErrors().size());
 
             assertEquals(
-                "Expected header 'first_name' at index 1 but got 'first_name;last_name;email;age;postal_code'",
-                result.getErrors().get(0).getMessage()
+                "Expected header 'first_name' at index 1 but got 'first_name;last_name;email;active;age;postal_code'",
+                getErrors(result)
             );
         }
+    }
+
+    private String getErrors(CsvResult result) {
+        return result.getErrors().stream()
+                     .map(CsvResult.CsvError::getMessage)
+                     .collect(Collectors.joining(", "));
     }
 
 }
