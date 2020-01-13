@@ -11,10 +11,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Capable of processing CSV files.
@@ -35,7 +36,7 @@ public class CsvService {
      * @return the parameters
      */
     public CsvParameters getParameters() {
-        Set<String> types = getTypes();
+        Collection<String> types = getTypes();
         return new CsvParameters(types, properties.getSeparator(), properties.getQuote());
     }
 
@@ -43,8 +44,16 @@ public class CsvService {
      * Retrieve all CSV types.
      * @return the types
      */
-    public Set<String> getTypes() {
-        return new TreeSet<>(handlers.keySet());
+    public Collection<String> getTypes() {
+        List<String> types = properties.getTypes();
+
+        if (types.isEmpty()) {
+            return new TreeSet<>(handlers.keySet()); // Return a sorted list of known types
+        }
+
+        return types.stream()
+                    .filter(handlers::containsKey)
+                    .collect(Collectors.toList());
     }
 
     /**
@@ -80,8 +89,9 @@ public class CsvService {
 
         try {
             return handler.handle(client);
-        } catch (RuntimeException rte) {
-            return new CsvResult().error(0, rte.getMessage());
+        } catch (RuntimeException e) {
+            log.error("Could not handle CSV file", e);
+            return CsvResult.error(e);
         }
     }
 

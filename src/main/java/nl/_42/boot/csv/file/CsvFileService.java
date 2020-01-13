@@ -42,16 +42,8 @@ public class CsvFileService {
   public void run() {
     log.info("Started importing CSV files from: {}", properties.getDirectory().getAbsolutePath());
 
-    Collection<String> types = getTypes();
+    Collection<String> types = service.getTypes();
     types.forEach(this::run);
-  }
-
-  private Collection<String> getTypes() {
-    Collection<String> types = properties.getOrder();
-    if (types.isEmpty()) {
-      types = service.getTypes();
-    }
-    return types;
   }
 
   /**
@@ -100,7 +92,7 @@ public class CsvFileService {
     if (success) {
       return Optional.of(target);
     } else {
-      log.info("Couldn't move CSV '{}' to: {}", file.getAbsolutePath(), target.getAbsolutePath());
+      log.error("Couldn't move CSV '{}' to: {}", file.getAbsolutePath(), target.getAbsolutePath());
       return Optional.empty();
     }
   }
@@ -120,7 +112,7 @@ public class CsvFileService {
     try (InputStream is = new FileInputStream(file)) {
       return service.load(is, type);
     } catch (IOException ioe) {
-      log.error("Could not process CSV file", ioe);
+      log.error("Could not load CSV file", ioe);
       return CsvResult.error(ioe);
     }
   }
@@ -140,7 +132,7 @@ public class CsvFileService {
         writer.write(message);
       }
     } catch (IOException ioe) {
-      log.info("Could not write log", ioe);
+      log.error("Could not write log", ioe);
     }
   }
 

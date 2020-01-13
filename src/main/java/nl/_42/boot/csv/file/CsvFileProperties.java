@@ -6,8 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 
 import static java.lang.String.format;
 
@@ -18,7 +16,6 @@ import static java.lang.String.format;
 public class CsvFileProperties {
 
     private File directory;
-    private List<String> order = Collections.emptyList();
     private boolean runOnStartup;
 
     File getDirectory(String type, String directory) {
