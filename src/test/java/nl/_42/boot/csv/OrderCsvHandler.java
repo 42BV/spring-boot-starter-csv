@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderCsvHandler extends AbstractCsvHandler<OrderCsvRow> {
 
-  public static final String TYPE = "orders";
+  public static final String TYPE = "ORDERS";
 
   public OrderCsvHandler() {
     super(TYPE, OrderCsvRow.class);

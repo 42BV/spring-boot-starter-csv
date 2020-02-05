@@ -1,3 +1,4 @@
 csv:
   file:
     directory: target/test-classes/csv
+  types: ['PERSONS', 'ORDERS']

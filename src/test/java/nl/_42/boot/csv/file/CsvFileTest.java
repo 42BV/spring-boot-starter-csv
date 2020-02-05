@@ -24,7 +24,7 @@ public class CsvFileTest {
 
   @Test
   public void run_success() throws IOException {
-    File file = new File("src/test/resources/persons.csv");
+    File file = new File("src/test/resources/csv/persons.csv");
     File upload = properties.getDirectory("persons", CsvFileService.UPLOAD);
     Files.copy(file, new File(upload, "persons.csv"));
 
@@ -42,7 +42,7 @@ public class CsvFileTest {
 
   @Test
   public void run_fail() throws IOException {
-    File file = new File("src/test/resources/persons-fail.csv");
+    File file = new File("src/test/resources/csv/persons-fail.csv");
     File upload = properties.getDirectory("persons", CsvFileService.UPLOAD);
     Files.copy(file, new File(upload, "persons-fail.csv"));
 

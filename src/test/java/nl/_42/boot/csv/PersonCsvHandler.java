@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PersonCsvHandler extends AbstractRowCsvHandler<PersonCsvRow> {
 
-  public static final String TYPE = "persons";
+  public static final String TYPE = "PERSONS";
 
   public PersonCsvHandler() {
     super(TYPE);
