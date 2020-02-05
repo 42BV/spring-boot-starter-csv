@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class Results {
+public class Results {
 
   private static final List<Object> VALUES = new ArrayList<>();
 
-  static void clear() {
+  public static void clear() {
     VALUES.clear();
   }
 
-  static void add(Object value) {
+  public static void add(Object value) {
     VALUES.add(value);
   }
 
-  static List<Object> values() {
+  public static List<Object> values() {
     return Collections.unmodifiableList(VALUES);
   }
 

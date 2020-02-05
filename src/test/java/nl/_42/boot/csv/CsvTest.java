@@ -33,7 +33,7 @@ public class CsvTest {
 
     @Test
     public void success_orders() throws IOException {
-        try (InputStream is = new ClassPathResource("orders.csv").getInputStream()) {
+        try (InputStream is = new ClassPathResource("csv/orders.csv").getInputStream()) {
             CsvResult result = csvService.load(is, OrderCsvHandler.TYPE);
 
             assertEquals("", getErrors(result));
@@ -52,7 +52,7 @@ public class CsvTest {
 
     @Test
     public void success_persons() throws IOException {
-        try (InputStream is = new ClassPathResource("persons.csv").getInputStream()) {
+        try (InputStream is = new ClassPathResource("csv/persons.csv").getInputStream()) {
             CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
 
             assertEquals("", getErrors(result));
@@ -77,7 +77,7 @@ public class CsvTest {
 
     @Test
     public void success_invalid_characters() throws IOException {
-        try (InputStream is = new ClassPathResource("persons.csv").getInputStream()) {
+        try (InputStream is = new ClassPathResource("csv/persons.csv").getInputStream()) {
             String content = '\uFEFF' + new Scanner(is).useDelimiter("\\A").next();
             ByteArrayInputStream bis = new ByteArrayInputStream(content.getBytes());
 
@@ -94,7 +94,7 @@ public class CsvTest {
 
     @Test
     public void fail_converter() throws IOException {
-        try (InputStream is = new ClassPathResource("persons-fail.csv").getInputStream()) {
+        try (InputStream is = new ClassPathResource("csv/persons-fail.csv").getInputStream()) {
             CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
 
             assertEquals(0, result.getSuccess());
@@ -107,7 +107,7 @@ public class CsvTest {
 
     @Test
     public void fail_separator() throws IOException {
-        try (InputStream is = new ClassPathResource("persons-semicolon.csv").getInputStream()) {
+        try (InputStream is = new ClassPathResource("csv/persons-semicolon.csv").getInputStream()) {
             CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
 
             assertEquals(0, result.getSuccess());
