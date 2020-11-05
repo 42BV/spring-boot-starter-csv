@@ -1,12 +1,14 @@
 package nl._42.boot.csv;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.any23.encoding.TikaEncodingDetector;
 import org.csveed.api.CsvClient;
 import org.csveed.api.CsvClientImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class CsvService {
+
+    private final TikaEncodingDetector detector = new TikaEncodingDetector();
 
     private final Map<String, CsvHandler<?>> handlers = new HashMap<>();
     private final CsvProperties properties;
@@ -85,23 +89,28 @@ public class CsvService {
     }
 
     private <T> CsvResult handle(InputStream is, CsvHandler<T> handler, CsvProperties properties) {
-        CsvClient<T> client = buildCsvClient(is, handler.getBeanClass(), properties);
-
         try {
+            CsvClient<T> client = build(is, handler.getBeanClass(), properties);
             return handler.handle(client);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | IOException e) {
             log.error("Could not handle CSV file", e);
             return CsvResult.error(e);
         }
     }
 
-    private <T> CsvClient<T> buildCsvClient(InputStream is, Class<T> beanClass, CsvProperties properties) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+    private <T> CsvClient<T> build(InputStream is, Class<T> beanClass, CsvProperties properties) throws IOException {
+        InputStreamReader reader = getReader(is);
 
-        CsvClient<T> csvReader = new CsvClientImpl<>(reader, beanClass);
-        csvReader.setQuote(properties.getQuote());
-        csvReader.setSeparator(properties.getSeparator());
-        return csvReader;
+        CsvClient<T> client = new CsvClientImpl<>(reader, beanClass);
+        client.setQuote(properties.getQuote());
+        client.setSeparator(properties.getSeparator());
+        return client;
+    }
+
+    private InputStreamReader getReader(InputStream is) throws IOException {
+        BufferedInputStream buffered = new BufferedInputStream(is);
+        String encoding = detector.guessEncoding(buffered);
+        return new InputStreamReader(buffered, encoding);
     }
 
     /**
