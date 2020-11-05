@@ -64,7 +64,7 @@ public class CsvTest {
         assertEquals(1, values.size());
 
         PersonCsvRow value = (PersonCsvRow) values.get(0);
-        assertEquals("Irénée", value.getFirstName());
+        assertEquals("Irénëe", value.getFirstName());
         assertEquals("de Tester", value.getLastName());
         assertEquals("irenee@test.nl", value.getEmail());
         assertEquals(true, value.isActive());
@@ -73,6 +73,23 @@ public class CsvTest {
         assertEquals("Mijn omschrijving", value.getDescriptions().get("NL"));
         assertEquals("My description", value.getDescriptions().get("EN"));
         assertEquals("female", value.getTags().get("gender"));
+    }
+
+    @Test
+    public void success_encoding_persons() throws IOException {
+        try (InputStream is = new ClassPathResource("csv/person-iso.csv").getInputStream()) {
+            CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
+
+            assertEquals("", getErrors(result));
+            assertEquals(1, result.getSuccess());
+            assertEquals(0, result.getErrors().size());
+        }
+
+        List<Object> values = Results.values();
+        assertEquals(1, values.size());
+
+        PersonCsvRow value = (PersonCsvRow) values.get(0);
+        assertEquals("Irénëe", value.getFirstName());
     }
 
     @Test
