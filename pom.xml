@@ -55,6 +55,24 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- CVE-2020-9489 -->
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-parsers</artifactId>
+                <version>1.24.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>edu.usc.ir</groupId>
+                        <artifactId>sentiment-analysis-parser</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-core</artifactId>
+                <version>1.24.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -112,6 +130,20 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.6</version>
+                </plugin>
+                <!-- OWASP -->
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>5.3.0</version>
+                    <configuration>
+                        <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+                        <skipProvidedScope>true</skipProvidedScope>
+                        <skipTestScope>true</skipTestScope>
+                        <skipRuntimeScope>true</skipRuntimeScope>
+                        <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                        <suppressionFile>owasp-suppressions.xml</suppressionFile>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
