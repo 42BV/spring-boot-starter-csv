@@ -43,7 +43,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
-        <spring.boot.version>2.3.4.RELEASE</spring.boot.version>
+
+        <!-- Dependencies -->
+        <spring.boot.version>2.4.1</spring.boot.version>
+        <tika.version>1.25</tika.version>
     </properties>
 
     <dependencyManagement>
@@ -69,6 +72,18 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.1-jre</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>failureaccess</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>org.csveed</groupId>
             <artifactId>csveed</artifactId>
             <version>0.5.0</version>
@@ -92,21 +107,26 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>${tika.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-parsers</artifactId>
-            <version>1.24.1</version>
+            <version>${tika.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>edu.usc.ir</groupId>
                     <artifactId>sentiment-analysis-parser</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.ccil.cowan.tagsoup</groupId>
+                    <artifactId>tagsoup</artifactId>
+                </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>1.24.1</version>
         </dependency>
 
         <dependency>
@@ -117,10 +137,22 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
