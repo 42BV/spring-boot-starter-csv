@@ -30,23 +30,33 @@ public class CsvTemplate {
     }
 
     private <T, R> boolean next(Supplier<T> supplier, Function<T, R> transformer, Consumer<R> consumer, int rowNumber) {
-        boolean found = true;
+        boolean found = false;
 
-        try {
-            T row = supplier.get();
-            if (row != null) {
+        T row = get(supplier);
+        if (row != null) {
+            try {
                 R value = transformer.apply(row);
                 consumer.accept(value);
                 result.success();
-            } else {
-                found = false;
+            } catch (RuntimeException rte) {
+                log.error("Could not handle CSV row " + rowNumber, rte);
+                result.error(rowNumber, rte.getMessage());
+            } finally {
+                found = true;
             }
-        } catch (RuntimeException rte) {
-            log.error("Could not handle CSV row " + rowNumber, rte);
-            result.error(rowNumber, rte.getMessage());
         }
 
         return found;
+    }
+
+    private <T> T get(Supplier<T> supplier) {
+        T row = null;
+        try {
+            row = supplier.get();
+        } catch (RuntimeException npe) {
+            log.error("Could not handle CSV", npe);
+        }
+        return row;
     }
 
 }

@@ -1,7 +1,6 @@
 package nl._42.boot.csv;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.any23.encoding.TikaEncodingDetector;
 import org.csveed.api.CsvClient;
 import org.csveed.api.CsvClientImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,8 @@ import java.util.stream.Collectors;
 @Service
 public class CsvService {
 
-    private final TikaEncodingDetector detector = new TikaEncodingDetector();
-
     private final Map<String, CsvHandler<?>> handlers = new HashMap<>();
+    private final EncodingDetector detector = new EncodingDetector();
     private final CsvProperties properties;
 
     public CsvService(CsvProperties properties) {
@@ -109,7 +107,7 @@ public class CsvService {
 
     private InputStreamReader getReader(InputStream is) throws IOException {
         BufferedInputStream buffered = new BufferedInputStream(is);
-        String encoding = detector.guessEncoding(buffered);
+        String encoding = detector.getEncoding(buffered);
         return new InputStreamReader(buffered, encoding);
     }
 
