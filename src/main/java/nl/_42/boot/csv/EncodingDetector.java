@@ -18,9 +18,13 @@ public class EncodingDetector {
             is = new BufferedInputStream(is);
         }
 
-        is.mark(Integer.MIN_VALUE);
-        String detected = UniversalDetector.detectCharset(is);
-        is.reset();
+        String detected = null;
+        try {
+            is.mark(Integer.MAX_VALUE);
+            detected = UniversalDetector.detectCharset(is);
+        } finally {
+            is.reset();
+        }
 
         String encoding = StringUtils.defaultIfBlank(detected, DEFAULT_ENCODING);
         if (encoding.contains("ASCII")) {
