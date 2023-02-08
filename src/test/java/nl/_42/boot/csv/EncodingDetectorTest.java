@@ -1,7 +1,7 @@
 package nl._42.boot.csv;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class EncodingDetectorTest {
     public void getEncoding_ascii() throws IOException {
         try (InputStream is = new ClassPathResource("csv/persons.csv").getInputStream()) {
             String encoding = detector.getEncoding(is);
-            Assert.assertEquals("UTF-8", encoding);
+            Assertions.assertEquals("UTF-8", encoding);
         }
     }
 
@@ -23,7 +23,7 @@ public class EncodingDetectorTest {
     public void getEncoding_ascii_invalid() throws IOException {
         try (InputStream is = new ClassPathResource("csv/persons-fail.csv").getInputStream()) {
             String encoding = detector.getEncoding(is);
-            Assert.assertEquals("UTF-8", encoding);
+            Assertions.assertEquals("UTF-8", encoding);
         }
     }
 
@@ -31,7 +31,7 @@ public class EncodingDetectorTest {
     public void getEncoding_iso() throws IOException {
         try (InputStream is = new ClassPathResource("csv/person-iso.csv").getInputStream()) {
             String encoding = detector.getEncoding(is);
-            Assert.assertEquals("WINDOWS-1252", encoding);
+            Assertions.assertEquals("WINDOWS-1252", encoding);
         }
     }
 

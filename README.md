@@ -14,9 +14,9 @@ the `CsvHandler` interface:
 ```java
 @Slf4j
 @Component
-public class OrderCsvHandler implements CsvHandler<OrderCsvRow> {
+public class PersonCsvHandler implements CsvHandler<PersonCsvRow> {
 
-  public static final String TYPE = "orders";
+  public static final String TYPE = "persons";
 
   @Override
   public String getType() {
@@ -24,28 +24,69 @@ public class OrderCsvHandler implements CsvHandler<OrderCsvRow> {
   }
 
   @Override
-  public Class<OrderCsvRow> getBeanClass() {
-    return OrderCsvRow.class;
+  public Class<PersonCsvRow> getBeanClass() {
+    return PersonCsvRow.class;
   }
 
   @Override
-  public CsvResult handle(CsvClient<OrderCsvRow> client) {
-    return new CsvTemplate().read(client::readBean, (order) -> save(order));
+  public CsvResult handle(CsvClient<PersonCsvRow> client) {
+    return new CsvTemplate().read(client::readBean, person -> save(person));
   }
-
+  
 }
 ```
 
 Handlers are detected during application startup and provided to end users. When handlers should 
 be protected, please add your own security logic.
 
-## Endpoints
+## Documentation
 
-### GET /csv
+CSV files are documented by implementing the `describe(CsvDocument)` method
+in its handler:
+
+```java
+@Slf4j
+@Component
+public class PersonCsvHandler implements CsvHandler<PersonCsvRow> {
+
+  @Override
+  public void describe(CsvDocument document) {
+    document.setDescription("The persons known in this system.");
+    document.addColumn(new CsvColumn("first_name").description("Person first name").example("Piet").required());
+  }
+  
+}
+```
+
+CSV documentation is exposed by HTTP endpoint, allowing it be visualised while uploading.
+
+To ensure the documentation remains valid we recommend writing tests. By calling
+the `validate` method a CSV upload is simulated using the examples from the document.
+
+```java
+public class PersonCsvHandlerTest {
+
+    @Test
+    public void validate_shouldSucceed() {
+        CsvResult result = csvService.validate(PersonCsvHandler.TYPE);
+        Assertions.assertTrue(result.isSuccess());
+        Assertions.assertEquals(1, result.getSuccess());
+    }
+
+}
+```
+
+## HTTP endpoints
+
+### HTTP GET `/csv`
 Retrieve all registered CSV types and default separator/quote characters.
 This endpoint is used to prefill the CSV upload form.
 
-### POST /csv
+### HTTP GET `/csv/document?type=X`
+Retrieve the documentation of a specific CSV type. In the documentation we
+define the various columns, including an example CSV file.
+
+### HTTP POST `/csv`
 Processes the CSV file based on the following *required* parameters:
 
  * file: CSV file (multipart)
@@ -67,7 +108,7 @@ Content will be processed per line and results are returned as response body:
 }
 ```
 
-## File
+## File share
 
 Files can also be uploaded via the file system. Enabling file mode requires some
 configuration:
