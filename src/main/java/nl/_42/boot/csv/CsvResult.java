@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CsvResult {
 
@@ -65,7 +64,12 @@ public class CsvResult {
         }
 
         public String getMessage() {
-            return messages.stream().collect(Collectors.joining(" "));
+            return String.join(" ", messages);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("(%d) %s", rowNumber, this.getMessage());
         }
 
     }

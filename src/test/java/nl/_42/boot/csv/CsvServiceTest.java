@@ -1,13 +1,13 @@
 package nl._42.boot.csv;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import nl._42.boot.csv.document.CsvDocument;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -18,16 +18,15 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
-public class CsvTest {
+public class CsvServiceTest {
 
     @Autowired
     private CsvService csvService;
 
-    @Before
+    @BeforeEach
     public void clear() {
         Results.clear();
     }
@@ -94,7 +93,7 @@ public class CsvTest {
     }
 
     @Test
-    @Ignore("Works in IDE but not on command line")
+    @Disabled("Works in IDE but not on command line")
     public void success_invalid_characters() throws IOException {
         try (InputStream is = new ClassPathResource("csv/persons.csv").getInputStream()) {
             String content = '\uFEFF' + new Scanner(is).useDelimiter("\\A").next();
@@ -141,8 +140,37 @@ public class CsvTest {
 
     private String getErrors(CsvResult result) {
         return result.getErrors().stream()
-                     .map(CsvResult.CsvError::getMessage)
-                     .collect(Collectors.joining(", "));
+            .map(CsvResult.CsvError::getMessage)
+            .collect(Collectors.joining(", "));
+    }
+
+    @Test
+    public void describe_shouldSucceed() {
+        CsvDocument document = csvService.getDocument(PersonCsvHandler.TYPE);
+        Assertions.assertNotNull(document);
+    }
+
+    @Test
+    public void validate_shouldSucceed_whenDefined() {
+        CsvResult result = csvService.validate(PersonCsvHandler.TYPE);
+        Assertions.assertTrue(result.isSuccess());
+        Assertions.assertEquals(1, result.getSuccess());
+    }
+
+    @Test
+    public void validate_shouldSucceed_whenUndefined() {
+        CsvResult result = csvService.validate(OrderCsvHandler.TYPE);
+        Assertions.assertTrue(result.isSuccess());
+        Assertions.assertEquals(0, result.getSuccess());
+    }
+
+    @Test
+    public void validate_shouldFail_whenInvalid() {
+        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () ->
+            csvService.validate(InvalidCsvHandler.TYPE)
+        );
+
+        Assertions.assertEquals("CSV example failed: (0) Expected header 'text' at index 1 but got 'unknown'", exception.getMessage());
     }
 
 }

@@ -1,12 +1,14 @@
 package nl._42.boot.csv;
 
 import lombok.extern.slf4j.Slf4j;
+import nl._42.boot.csv.document.CsvDocument;
 import org.csveed.api.CsvClient;
 import org.csveed.api.CsvClientImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -78,6 +80,41 @@ public class CsvService {
     public CsvResult load(InputStream is, String type, CsvProperties properties) {
         CsvHandler handler = getHandler(type);
         return handle(is, handler, properties);
+    }
+
+    /**
+     * Retrieve the documentation of a CSV handler.
+     * @param type the CSV type
+     * @return the documentation
+     */
+    public CsvDocument getDocument(String type) {
+        CsvDocument document = new CsvDocument(properties, type);
+        CsvHandler handler = getHandler(type);
+        handler.describe(document);
+        return document;
+    }
+
+    /**
+     * Validate the CSV handler based on its documentation.
+     * @param type the CSV type
+     * @return the result
+     */
+    public CsvResult validate(String type) {
+        CsvDocument document = getDocument(type);
+        Objects.requireNonNull(document, "CSV document cannot be null");
+
+        if (document.getColumns().isEmpty()) {
+            return new CsvResult();
+        }
+
+        String content = document.getContent();
+        InputStream is = new ByteArrayInputStream(content.getBytes());
+        CsvResult result = load(is, type);
+        if (!result.isSuccess()) {
+            String errors = result.getErrors().stream().map(Objects::toString).collect(Collectors.joining(", "));
+            throw new IllegalStateException(String.format("CSV example failed: %s", errors));
+        }
+        return result;
     }
 
     private CsvHandler<?> getHandler(String type) {
