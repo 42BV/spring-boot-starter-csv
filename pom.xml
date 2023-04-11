@@ -45,7 +45,7 @@
         <java.version>17</java.version>
 
         <!-- Dependencies -->
-        <spring.boot.version>3.0.2</spring.boot.version>
+        <spring.boot.version>3.0.5</spring.boot.version>
     </properties>
 
     <dependencyManagement>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>30.1-jre</version>
+            <version>31.1-jre</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -85,7 +85,7 @@
         <dependency>
             <groupId>org.csveed</groupId>
             <artifactId>csveed</artifactId>
-            <version>0.5.0</version>
+            <version>0.7.4</version>
         </dependency>
 
         <!-- Encoding -->
@@ -202,7 +202,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>8.1.0</version>
+                <version>8.1.2</version>
                 <configuration>
                     <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
                     <skipProvidedScope>true</skipProvidedScope>
