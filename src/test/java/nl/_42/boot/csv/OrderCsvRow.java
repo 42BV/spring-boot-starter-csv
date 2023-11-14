@@ -13,12 +13,12 @@ import java.time.LocalDate;
 @Setter
 public class OrderCsvRow {
 
-  private String person;
+    private String person;
 
-  @CsvConverter(converter = LocalDateConverter.class)
-  private LocalDate date;
+    @CsvConverter(converter = LocalDateConverter.class)
+    private LocalDate date;
 
-  @CsvConverter(converter = BigDecimalConverter.class)
-  private BigDecimal cost;
+    @CsvConverter(converter = BigDecimalConverter.class)
+    private BigDecimal cost;
 
 }

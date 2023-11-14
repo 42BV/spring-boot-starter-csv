@@ -6,18 +6,18 @@ import java.math.BigDecimal;
 
 public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 
-  public BigDecimalConverter() {
-    super(BigDecimal.class);
-  }
+    public BigDecimalConverter() {
+        super(BigDecimal.class);
+    }
 
-  @Override
-  public BigDecimal fromString(String text) {
-    return new BigDecimal(text);
-  }
+    @Override
+    public BigDecimal fromString(String text) {
+        return new BigDecimal(text);
+    }
 
-  @Override
-  public String toString(BigDecimal value) {
-    return value.toString();
-  }
+    @Override
+    public String toString(BigDecimal value) {
+        return value.toString();
+    }
 
 }

@@ -15,30 +15,30 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class CsvLoaderTest {
 
-  @Autowired
-  private CsvLoader loader;
+    @Autowired
+    private CsvLoader loader;
 
-  @BeforeEach
-  public void clear() {
-    Results.clear();
-  }
+    @BeforeEach
+    public void clear() {
+        Results.clear();
+    }
 
-  @Test
-  public void loadAll_shouldSucceed() {
-    loader.loadAll("csv");
+    @Test
+    public void loadAll_shouldSucceed() {
+        loader.loadAll("csv");
 
-    List<Object> values = Results.values();
-    assertEquals(2, values.size());
-    assertEquals(PersonCsvRow.class, values.get(0).getClass());
-    assertEquals(OrderCsvRow.class, values.get(1).getClass());
-  }
+        List<Object> values = Results.values();
+        assertEquals(2, values.size());
+        assertEquals(PersonCsvRow.class, values.get(0).getClass());
+        assertEquals(OrderCsvRow.class, values.get(1).getClass());
+    }
 
-  @Test
-  public void loadAll_shouldSucceed_whenNotExisting() {
-    loader.loadAll("unknown");
+    @Test
+    public void loadAll_shouldSucceed_whenNotExisting() {
+        loader.loadAll("unknown");
 
-    List<Object> values = Results.values();
-    assertEquals(0, values.size());
-  }
+        List<Object> values = Results.values();
+        assertEquals(0, values.size());
+    }
 
 }

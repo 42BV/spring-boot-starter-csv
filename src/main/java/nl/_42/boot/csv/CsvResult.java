@@ -28,7 +28,7 @@ public class CsvResult {
 
     public CsvResult error(int rowNumber, String message) {
         CsvError error = errors.stream().filter(e -> e.rowNumber == rowNumber)
-                                        .findFirst().orElseGet(() -> addError(rowNumber));
+                .findFirst().orElseGet(() -> addError(rowNumber));
 
         error.addMessage(message);
         return this;

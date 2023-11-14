@@ -37,6 +37,7 @@ public class CsvService {
 
     /**
      * Retrieve all known CSV types and properties.
+     *
      * @return the parameters
      */
     public CsvParameters getParameters() {
@@ -46,6 +47,7 @@ public class CsvService {
 
     /**
      * Retrieve all CSV types.
+     *
      * @return the types
      */
     public Collection<String> getTypes() {
@@ -56,13 +58,14 @@ public class CsvService {
         }
 
         return types.stream()
-                    .filter(handlers::containsKey)
-                    .collect(Collectors.toList());
+                .filter(handlers::containsKey)
+                .collect(Collectors.toList());
     }
 
     /**
      * Process a CSV, based on default properties.
-     * @param is the CSV content
+     *
+     * @param is   the CSV content
      * @param type the CSV type
      * @return the result
      */
@@ -72,8 +75,9 @@ public class CsvService {
 
     /**
      * Process a CSV.
-     * @param is the CSV content
-     * @param type the CSV type
+     *
+     * @param is         the CSV content
+     * @param type       the CSV type
      * @param properties the properties
      * @return the result
      */
@@ -84,6 +88,7 @@ public class CsvService {
 
     /**
      * Retrieve the documentation of a CSV handler.
+     *
      * @param type the CSV type
      * @return the documentation
      */
@@ -96,6 +101,7 @@ public class CsvService {
 
     /**
      * Validate the CSV handler based on its documentation.
+     *
      * @param type the CSV type
      * @return the result
      */
@@ -150,6 +156,7 @@ public class CsvService {
 
     /**
      * Register all known handlers.
+     *
      * @param handlers the handlers, if any
      */
     @Autowired(required = false)

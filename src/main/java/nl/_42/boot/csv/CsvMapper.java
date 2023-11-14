@@ -19,6 +19,7 @@ import static java.lang.String.format;
  * or dynamic based on a prefix or variable tail.
  * <br>
  * Only use this mapper when static mapping is not possible.
+ *
  * @param <T> the target type
  */
 public class CsvMapper<T> implements Function<Row, T> {
@@ -68,6 +69,7 @@ public class CsvMapper<T> implements Function<Row, T> {
 
         /**
          * Expected the next column to have a certain name.
+         *
          * @param expected the expected name
          * @param consumer the handler
          * @return this builder
@@ -79,6 +81,7 @@ public class CsvMapper<T> implements Function<Row, T> {
 
         /**
          * Register consumer when header is present.
+         *
          * @param expected the expected name
          * @param consumer the handler
          * @return this builder
@@ -95,7 +98,7 @@ public class CsvMapper<T> implements Function<Row, T> {
             String name = getName(index);
             if (!Objects.equals(expected, name)) {
                 throw new IllegalArgumentException(
-                    format("Expected header '%s' at index %d but got '%s'", expected, index, name)
+                        format("Expected header '%s' at index %d but got '%s'", expected, index, name)
                 );
             }
         }
@@ -126,8 +129,8 @@ public class CsvMapper<T> implements Function<Row, T> {
                     consumer.accept(key, value);
                 } catch (RuntimeException rte) {
                     throw new IllegalStateException(
-                        format("Could not map column '%s' at index %d: %s", name, index, rte.getMessage()),
-                        rte
+                            format("Could not map column '%s' at index %d: %s", name, index, rte.getMessage()),
+                            rte
                     );
                 }
             };
@@ -135,6 +138,7 @@ public class CsvMapper<T> implements Function<Row, T> {
 
         /**
          * Register all next columns that start with the prefix, if any.
+         *
          * @param prefix the prefix
          * @param mapper the function producing a handler for each column
          * @return this builder
@@ -151,6 +155,7 @@ public class CsvMapper<T> implements Function<Row, T> {
 
         /**
          * Register all remaining columns, if any.
+         *
          * @param mapper the function producing a handler for each column
          * @return this builder
          */
@@ -164,6 +169,7 @@ public class CsvMapper<T> implements Function<Row, T> {
 
         /**
          * Use a different formatter for parsing headers and values.
+         *
          * @param formatter the formatter
          * @return this builder
          */

@@ -26,7 +26,6 @@ public class CsvLoader {
      * Load all CSV files inside a classpath location. During execution
      * the loader will scan for files matching the defined CSV types, e.g.
      * 'PERSON' expects a 'person.csv'.
-     *
      * Whenever a matching file is found it is loaded automatically.
      *
      * @param location the base directory on the classpath
