@@ -132,16 +132,30 @@ public class CsvServiceTest {
             assertEquals(1, result.getErrors().size());
 
             assertEquals(
-                "Expected header 'first_name' at index 1 but got 'first_name;last_name;email;active;age;postal_code'",
-                getErrors(result)
+                    "Expected header 'first_name' at index 1 but got 'first_name;last_name;email;active;age;postal_code'",
+                    getErrors(result)
             );
+        }
+    }
+
+    @Test
+    public void fail_invalid_columns() throws IOException {
+        try (InputStream is = new ClassPathResource("csv/persons-invalid-columns.csv").getInputStream()) {
+            CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
+
+            assertEquals(1, result.getSuccess());
+            assertEquals(1, result.getErrors().size());
+
+            CsvResult.CsvError error = result.getErrors().get(0);
+            assertEquals("The expected number of columns is 6, whereas it was 5", error.getMessage());
+            assertEquals(1, error.getRowNumber());
         }
     }
 
     private String getErrors(CsvResult result) {
         return result.getErrors().stream()
-            .map(CsvResult.CsvError::getMessage)
-            .collect(Collectors.joining(", "));
+                .map(CsvResult.CsvError::getMessage)
+                .collect(Collectors.joining(", "));
     }
 
     @Test
@@ -167,7 +181,7 @@ public class CsvServiceTest {
     @Test
     public void validate_shouldFail_whenInvalid() {
         IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () ->
-            csvService.validate(InvalidCsvHandler.TYPE)
+                csvService.validate(InvalidCsvHandler.TYPE)
         );
 
         Assertions.assertEquals("CSV example failed: (0) Expected header 'text' at index 1 but got 'unknown'", exception.getMessage());

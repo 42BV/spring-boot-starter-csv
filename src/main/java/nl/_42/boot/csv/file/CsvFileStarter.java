@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty("csv.file.directory")
 class CsvFileStarter implements ApplicationListener<ApplicationReadyEvent> {
 
-  private final CsvFileProperties properties;
-  private final CsvFileService service;
+    private final CsvFileProperties properties;
+    private final CsvFileService service;
 
-  @Override
-  public void onApplicationEvent(ApplicationReadyEvent event) {
-    if (properties.isRunOnStartup()) {
-      service.run();
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent event) {
+        if (properties.isRunOnStartup()) {
+            service.run();
+        }
     }
-  }
 
 }

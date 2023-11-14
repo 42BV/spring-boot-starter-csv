@@ -32,9 +32,9 @@ public class InvalidCsvHandler implements CsvHandler<InvalidCsvRow> {
 
     private CsvMapper<InvalidCsvRow> mapperOf(Header header) {
         return CsvMapper
-            .builder(InvalidCsvRow::new, header)
-            .add("text", (text, row) -> row.setText(text))
-            .build();
+                .builder(InvalidCsvRow::new, header)
+                .add("text", (text, row) -> row.setText(text))
+                .build();
     }
 
     @Override
