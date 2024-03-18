@@ -1,13 +1,6 @@
 package nl._42.boot.csv;
 
-import nl._42.boot.csv.document.CsvDocument;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -18,10 +11,18 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+
+import nl._42.boot.csv.document.CsvDocument;
 
 @SpringBootTest
-public class CsvServiceTest {
+class CsvServiceTest {
 
     @Autowired
     private CsvService csvService;
@@ -32,7 +33,7 @@ public class CsvServiceTest {
     }
 
     @Test
-    public void success_orders() throws IOException {
+    void success_orders() throws IOException {
         try (InputStream is = new ClassPathResource("csv/orders.csv").getInputStream()) {
             CsvResult result = csvService.load(is, OrderCsvHandler.TYPE);
 
@@ -51,7 +52,7 @@ public class CsvServiceTest {
     }
 
     @Test
-    public void success_persons() throws IOException {
+    void success_persons() throws IOException {
         try (InputStream is = new ClassPathResource("csv/persons.csv").getInputStream()) {
             CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
 
@@ -76,7 +77,7 @@ public class CsvServiceTest {
     }
 
     @Test
-    public void success_encoding_persons() throws IOException {
+    void success_encoding_persons() throws IOException {
         try (InputStream is = new ClassPathResource("csv/person-iso.csv").getInputStream()) {
             CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
 
@@ -94,16 +95,18 @@ public class CsvServiceTest {
 
     @Test
     @Disabled("Works in IDE but not on command line")
-    public void success_invalid_characters() throws IOException {
+    void success_invalid_characters() throws IOException {
         try (InputStream is = new ClassPathResource("csv/persons.csv").getInputStream()) {
-            String content = '\uFEFF' + new Scanner(is).useDelimiter("\\A").next();
-            ByteArrayInputStream bis = new ByteArrayInputStream(content.getBytes());
+            try (Scanner scanner = new Scanner(is).useDelimiter("\\A")) {
+                String content = '\uFEFF' + scanner.next();
+                ByteArrayInputStream bis = new ByteArrayInputStream(content.getBytes());
 
-            CsvResult result = csvService.load(bis, PersonCsvHandler.TYPE);
+                CsvResult result = csvService.load(bis, PersonCsvHandler.TYPE);
 
-            assertEquals("", getErrors(result));
-            assertEquals(1, result.getSuccess());
-            assertEquals(0, result.getErrors().size());
+                assertEquals("", getErrors(result));
+                assertEquals(1, result.getSuccess());
+                assertEquals(0, result.getErrors().size());
+            }
         }
 
         List<Object> values = Results.values();
@@ -111,7 +114,7 @@ public class CsvServiceTest {
     }
 
     @Test
-    public void fail_converter() throws IOException {
+    void fail_converter() throws IOException {
         try (InputStream is = new ClassPathResource("csv/persons-fail.csv").getInputStream()) {
             CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
 
@@ -124,7 +127,7 @@ public class CsvServiceTest {
     }
 
     @Test
-    public void fail_separator() throws IOException {
+    void fail_separator() throws IOException {
         try (InputStream is = new ClassPathResource("csv/persons-semicolon.csv").getInputStream()) {
             CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
 
@@ -139,11 +142,11 @@ public class CsvServiceTest {
     }
 
     @Test
-    public void fail_invalid_columns() throws IOException {
+    void fail_invalid_columns() throws IOException {
         try (InputStream is = new ClassPathResource("csv/persons-invalid-columns.csv").getInputStream()) {
             CsvResult result = csvService.load(is, PersonCsvHandler.TYPE);
 
-            assertEquals(1, result.getSuccess());
+            assertEquals(0, result.getSuccess());
             assertEquals(1, result.getErrors().size());
 
             CsvResult.CsvError error = result.getErrors().get(0);
@@ -159,27 +162,27 @@ public class CsvServiceTest {
     }
 
     @Test
-    public void describe_shouldSucceed() {
+    void describe_shouldSucceed() {
         CsvDocument document = csvService.getDocument(PersonCsvHandler.TYPE);
         Assertions.assertNotNull(document);
     }
 
     @Test
-    public void validate_shouldSucceed_whenDefined() {
+    void validate_shouldSucceed_whenDefined() {
         CsvResult result = csvService.validate(PersonCsvHandler.TYPE);
         Assertions.assertTrue(result.isSuccess());
         Assertions.assertEquals(1, result.getSuccess());
     }
 
     @Test
-    public void validate_shouldSucceed_whenUndefined() {
+    void validate_shouldSucceed_whenUndefined() {
         CsvResult result = csvService.validate(OrderCsvHandler.TYPE);
         Assertions.assertTrue(result.isSuccess());
         Assertions.assertEquals(0, result.getSuccess());
     }
 
     @Test
-    public void validate_shouldFail_whenInvalid() {
+    void validate_shouldFail_whenInvalid() {
         IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () ->
                 csvService.validate(InvalidCsvHandler.TYPE)
         );
