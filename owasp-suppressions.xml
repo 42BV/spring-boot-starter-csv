@@ -4,4 +4,9 @@
         <notes>Fails due to snakeyaml-1.33 not yet fixed</notes>
         <cve>CVE-2022-1471</cve>
     </suppress>
+    <suppress>
+        <notes>CVE is disputed and according to FasterXML GitHub not a CVE: https://github.com/FasterXML/jackson-databind/issues/3972</notes>
+        <filePath regex="true">.*\bjackson-databind-2\.15\.4\.jar</filePath>
+        <cve>CVE-2023-35116</cve>
+    </suppress>
 </suppressions>
