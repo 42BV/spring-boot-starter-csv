@@ -59,7 +59,7 @@ public class CsvTemplate {
     }
 
     private void handleException(int rowNumber, RuntimeException rte) {
-        log.error("Could not handle CSV row {}", rowNumber, rte);
+        log.warn("Could not handle CSV row {}", rowNumber, rte);
         result.error(rowNumber, rte.getMessage());
     }
     

@@ -11,8 +11,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static java.lang.String.format;
-
 /**
  * Converts CSV rows with dynamic (header based) mappings into the target format.
  * Mappings can be partially static, expecting a certain header at a certain index,
@@ -98,7 +96,7 @@ public class CsvMapper<T> implements Function<Row, T> {
             String name = getName(index);
             if (!Objects.equals(expected, name)) {
                 throw new IllegalArgumentException(
-                        format("Expected header '%s' at index %d but got '%s'", expected, index, name)
+                    "Expected header '%s' at index %d but got '%s'".formatted(expected, index, name)
                 );
             }
         }
@@ -129,8 +127,8 @@ public class CsvMapper<T> implements Function<Row, T> {
                     consumer.accept(key, value);
                 } catch (RuntimeException rte) {
                     throw new IllegalStateException(
-                            format("Could not map column '%s' at index %d: %s", name, index, rte.getMessage()),
-                            rte
+                        "Could not map column '%s' at index %d: %s".formatted(name, index, rte.getMessage()),
+                        rte
                     );
                 }
             };

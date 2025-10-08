@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 
-import static java.lang.String.format;
-
 @Getter
 @Setter
 @Component
@@ -19,8 +17,7 @@ public class CsvFileProperties {
     private boolean runOnStartup;
 
     File getDirectory(String type, String directory) {
-        String path = format("%s/%s", type, directory);
-
+        String path = "%s/%s".formatted(type, directory);
         File file = new File(this.directory, path);
         file.mkdirs();
         return file;

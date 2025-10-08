@@ -69,7 +69,7 @@ public class CsvResult {
 
         @Override
         public String toString() {
-            return String.format("(%d) %s", rowNumber, this.getMessage());
+            return "(%d) %s".formatted(rowNumber, this.getMessage());
         }
 
     }
