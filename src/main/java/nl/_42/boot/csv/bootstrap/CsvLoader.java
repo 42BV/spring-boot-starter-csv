@@ -46,9 +46,10 @@ public class CsvLoader {
             if (file.exists()) {
                 load(file, type);
             }
-        } catch (IOException e) {
-            log.error("Could not load CSV " + name, e);
-            throw new IllegalStateException(e);
+        } catch (IOException ioe) {
+            String message = "Could not load CSV %s".formatted(name);
+            log.error(message, ioe);
+            throw new IllegalStateException(message, ioe);
         }
     }
 

@@ -18,8 +18,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
-import static java.lang.String.format;
-
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -55,7 +53,7 @@ public class CsvFileService {
         try {
             perform(type);
         } catch (RuntimeException rte) {
-            log.error("Could not import '" + type + "' CSV files", rte);
+            log.error("Could not import '{}' CSV files", type, rte);
         }
     }
 
@@ -64,6 +62,10 @@ public class CsvFileService {
         log.info("Importing '{}' CSV files from: {}", type, upload.getAbsolutePath());
 
         File[] files = upload.listFiles();
+        if (files == null) {
+            return;
+        }
+
         for (File file : files) {
             if (isSupported(file)) {
                 moveToWork(type, file).ifPresent(moved -> run(type, moved));
@@ -85,7 +87,7 @@ public class CsvFileService {
     private String addTimestamp(File file) {
         String name = file.getName().toLowerCase().replaceAll("\\.csv", "");
         long timestamp = Instant.now().getEpochSecond();
-        return format("%s-%d.csv", name, timestamp);
+        return "%s-%d.csv".formatted(name, timestamp);
     }
 
     private Optional<File> move(File file, File target) {
@@ -129,7 +131,7 @@ public class CsvFileService {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(target))) {
             for (CsvResult.CsvError error : result.getErrors()) {
-                String message = format("%d: %s\n", error.getRowNumber(), error.getMessage());
+                String message = "%d: %s\n".formatted(error.getRowNumber(), error.getMessage());
                 writer.write(message);
             }
         } catch (IOException ioe) {

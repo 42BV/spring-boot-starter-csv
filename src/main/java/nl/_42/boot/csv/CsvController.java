@@ -76,7 +76,7 @@ public class CsvController {
         try (InputStream is = provider.getInputStream()) {
             return csvService.load(is, type, properties);
         } catch (RuntimeException | IOException e) {
-            log.error("Could not load CSV file", e);
+            log.warn("Could not load CSV", e);
             return CsvResult.error(e);
         }
     }

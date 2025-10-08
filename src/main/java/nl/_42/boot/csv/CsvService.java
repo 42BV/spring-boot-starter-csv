@@ -118,7 +118,7 @@ public class CsvService {
         CsvResult result = load(is, type);
         if (!result.isSuccess()) {
             String errors = result.getErrors().stream().map(Objects::toString).collect(Collectors.joining(", "));
-            throw new IllegalStateException(String.format("CSV example failed: %s", errors));
+            throw new IllegalStateException("CSV example failed: %s".formatted(errors));
         }
         return result;
     }
@@ -134,7 +134,7 @@ public class CsvService {
             CsvClient<T> client = build(is, handler.getBeanClass(), properties);
             return handler.handle(client);
         } catch (RuntimeException | IOException e) {
-            log.error("Could not handle CSV file", e);
+            log.warn("Could not handle CSV", e);
             return CsvResult.error(e);
         }
     }
